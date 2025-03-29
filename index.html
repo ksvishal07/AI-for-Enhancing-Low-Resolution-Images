@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Upscaler - Convert Low to High Resolution</title>
+    <style>
+        body {
+            background-color: #f5f7fa;
+            background-image: url('https://example.com/upscale-bg.jpg'); /* Replace with your actual background image */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            min-height: 100vh;
+            flex-direction: column;
+            margin: 0;
+            color: #333;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.85);
+            z-index: -1;
+        }
+
+        .main {
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+            padding: 40px;
+            width: 600px;
+            max-width: 90%;
+            text-align: center;
+            margin: 20px 0;
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .main:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 700;
+            font-size: 2.2em;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+            max-width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        h3 {
+            margin: 25px 0 15px;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        button {
+            padding: 14px 24px;
+            border-radius: 8px;
+            margin-top: 15px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            width: 100%;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .file-input-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .file-input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 16px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-input-label:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 10px 0;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .image-container {
+            margin: 20px 0;
+            padding: 0;
+        }
+
+        .file-info {
+            margin: 15px 0;
+            padding: 12px;
+            background-color: #e3f2fd;
+            border-radius: 8px;
+            color: #0d47a1;
+            font-weight: 500;
+            display: none;
+            transition: all 0.3s ease;
+        }
+
+        .comparison {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+            gap: 20px;
+        }
+
+        .comparison-item {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .quality-badge {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            margin-left: 8px;
+            display: inline-block;
+        }
+
+        .badge-low {
+            background: linear-gradient(135deg, #f44336, #c62828);
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+        }
+
+        .download-btn:hover {
+            background: linear-gradient(135deg, #43A047, #1B5E20);
+        }
+
+        .features {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 30px 0;
+            gap: 15px;
+        }
+
+        .feature {
+            flex: 1;
+            min-width: 120px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 10px;
+            backdrop-filter: blur(5px);
+        }
+
+        @media (max-width: 768px) {
+            .main {
+                padding: 30px 20px;
+            }
+            .comparison {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .features {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <h1>AI Image Upscaler</h1>
+        <p class="subtitle">Transform your low-quality images into stunning high-resolution photos with our advanced AI technology</p>
+        
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <div class="file-input-container">
+                <label class="file-input-label" for="file-upload">
+                    Select Image to Upscale
+                </label>
+                <input id="file-upload" class="file-input" type="file" name="file" accept="image/*" required>
+                <div id="file-info" class="file-info">No file selected</div>
+            </div>
+            <button type="submit">Upscale Image Now</button>
+        </form>
+
+        {% if filename %}
+        <div class="comparison">
+            <div class="comparison-item">
+                <h3>Original <span class="quality-badge badge-low">Low Res</span></h3>
+                <div class="image-container">
+                    <img src="{{ filename }}" width="300" alt="Original image">
+                </div>
+            </div>
+            <div class="comparison-item">
+                <h3>Enhanced <span class="quality-badge">HD</span></h3>
+                <div class="image-container">
+                    <img src="{{ enhanced }}" width="300" alt="Enhanced image">
+                </div>
+            </div>
+        </div>
+        <a href="{{ enhanced }}" download="enhanced_image.jpg">
+            <button class="download-btn">Download HD Image</button>
+        </a>
+        {% endif %}
+    </div>
+
+    <script>
+        document.getElementById('file-upload').addEventListener('change', function(e) {
+            const fileInfo = document.getElementById('file-info');
+            if (this.files.length > 0) {
+                const fileName = this.files[0].name;
+                const fileSize = (this.files[0].size / 1024).toFixed(2); // KB
+                fileInfo.textContent = `Selected: ${fileName} (${fileSize} KB)`;
+                fileInfo.style.display = 'block';
+                fileInfo.style.backgroundColor = '#e3f2fd';
+                fileInfo.style.color = '#0d47a1';
+            } else {
+                fileInfo.textContent = 'No file selected';
+                fileInfo.style.backgroundColor = '#ffebee';
+                fileInfo.style.color = '#c62828';
+            }
+        });
+    </script>
+</body>
+</html>
